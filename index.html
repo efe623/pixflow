@@ -26,6 +26,15 @@
 
     html { scroll-behavior: smooth; }
 
+    /* ── SECTION DIVIDERS ── */
+    section + section,
+    section + .stats,
+    .stats + section,
+    .marquee-section + section,
+    section + .marquee-section {
+      border-top: 1px solid var(--border);
+    }
+
     body {
       background: var(--bg);
       color: var(--text);
@@ -1486,7 +1495,7 @@
 
 
       <!-- Row 2: right → left (steps 4, 5) -->
-      <div class="s-row fade-up" style="justify-content:center">
+      <div class="s-row fade-up" style="justify-content:center;margin-top:2rem">
         <div class="s-card">
           <div class="s-step-num">Step 04</div>
           <div class="s-num">🔄</div>
