@@ -134,6 +134,14 @@
       gap: 1.25rem;
       position: relative;
     }
+    .s-row[style*="justify-content"] {
+      display: flex;
+      justify-content: center;
+    }
+    .s-row[style*="justify-content"] .s-card {
+      flex: 0 0 calc(33.333% - 0.85rem);
+      max-width: calc(33.333% - 0.85rem);
+    }
 
     .s-card {
       background: var(--card);
@@ -1476,38 +1484,23 @@
         </div>
       </div>
 
-      <!-- Curved connector: sweeps right → curves down → goes back left -->
-      <div class="s-curve-wrap">
-        <svg viewBox="0 0 860 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 820 0 C 860 0, 860 60, 820 60 L 40 60 C 0 60, 0 60, 40 60" stroke="url(#sg1)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-          <defs>
-            <linearGradient id="sg1" x1="860" y1="0" x2="0" y2="60" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#6366f1"/>
-              <stop offset="100%" stop-color="#a78bfa"/>
-            </linearGradient>
-          </defs>
-          <!-- Arrow at end -->
-          <polygon points="40,54 28,60 40,66" fill="#a78bfa" transform="translate(0,-3)"/>
-        </svg>
-      </div>
 
       <!-- Row 2: right → left (steps 4, 5) -->
-      <div class="s-row fade-up" style="direction:rtl">
-        <div class="s-card" style="direction:ltr">
+      <div class="s-row fade-up" style="justify-content:center">
+        <div class="s-card">
           <div class="s-step-num">Step 04</div>
           <div class="s-num">🔄</div>
           <h3>Revisions</h3>
           <p>Your feedback is taken seriously. Changes made fast — colours, copy, layout, anything — until it's exactly right.</p>
           <span class="tl-time">Usually 1–2 rounds</span>
         </div>
-        <div class="s-card" style="direction:ltr">
+        <div class="s-card">
           <div class="s-step-num">Step 05</div>
           <div class="s-num">🚀</div>
           <h3>Launch Day</h3>
           <p>Your site goes live with a real URL. Deployment fully handled — just share the link with the world.</p>
           <span class="tl-time">Same day as approval</span>
         </div>
-        <div style="visibility:hidden" class="s-card" aria-hidden="true"></div>
       </div>
     </div>
   </div>
