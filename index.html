@@ -124,6 +124,67 @@
     .guarantee-card h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.6rem; }
     .guarantee-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
 
+    /* ── S-SHAPE STEPS ── */
+    .s-steps { max-width: 900px; margin: 2rem auto 0; position: relative; }
+    .s-step {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      align-items: center;
+      margin-bottom: 0;
+      position: relative;
+    }
+    .s-step.s-left .s-content { grid-column: 1; text-align: right; padding-right: 2rem; }
+    .s-step.s-left .s-dot    { grid-column: 2; }
+    .s-step.s-left .s-connector { grid-column: 3; }
+    .s-step.s-right .s-connector { grid-column: 1; }
+    .s-step.s-right .s-dot     { grid-column: 2; }
+    .s-step.s-right .s-content  { grid-column: 3; text-align: left; padding-left: 2rem; }
+
+    .s-dot {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; justify-self: center;
+      box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px rgba(99,102,241,0.4);
+      z-index: 1; position: relative;
+    }
+    .s-content { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .s-content h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .s-content p { color: var(--muted); font-size: 0.85rem; line-height: 1.65; margin-bottom: 0.5rem; }
+
+    /* curved connectors between steps */
+    .s-connector {
+      height: 80px;
+      position: relative;
+    }
+    .s-right-conn::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 50%;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent1));
+      border-radius: 99px;
+      transform: translateY(-50%);
+    }
+    .s-left-conn::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--accent1), transparent);
+      border-radius: 99px;
+      transform: translateY(-50%);
+    }
+
+    @media (max-width: 768px) {
+      .s-step { grid-template-columns: 50px 1fr; }
+      .s-step.s-left .s-content,
+      .s-step.s-right .s-content { grid-column: 2; text-align: left; padding-left: 1.25rem; padding-right: 0; }
+      .s-step.s-left .s-dot,
+      .s-step.s-right .s-dot { grid-column: 1; }
+      .s-connector { display: none; }
+    }
+
     /* ── TIMELINE ── */
     .timeline-section { padding: 2.5rem 2rem; background: var(--bg); }
     .timeline { max-width: 700px; margin: 3.5rem auto 0; position: relative; }
@@ -231,7 +292,7 @@
 
     /* ── HERO ── */
     .hero {
-      min-height: 75vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1298,7 +1359,7 @@
 <div class="stats">
   <div class="stats-grid">
     <div class="fade-up">
-      <div class="stat-number" data-count="4">4+</div>
+      <div class="stat-number">35+</div>
       <div class="stat-label">Apps & Sites Shipped</div>
     </div>
     <div class="fade-up fade-up-delay-1">
@@ -1408,46 +1469,50 @@
     <span class="section-label fade-up">Process</span>
     <h2 class="section-title fade-up">How It Works</h2>
     <p class="section-sub fade-up">A transparent look at exactly what happens after you reach out.</p>
-    <div class="timeline">
-      <div class="tl-item fade-up">
-        <div class="tl-dot">💬</div>
-        <div class="tl-content">
+    <div class="s-steps">
+      <div class="s-step s-left fade-up">
+        <div class="s-connector s-right-conn"></div>
+        <div class="s-dot">💬</div>
+        <div class="s-content">
           <div class="tl-step">Step 01</div>
           <h3>You Reach Out</h3>
           <p>Fill out the contact form with your email, chosen package, and a description of what you want. No calls, no meetings — just a simple message.</p>
           <span class="tl-time">Takes 2 minutes</span>
         </div>
       </div>
-      <div class="tl-item fade-up">
-        <div class="tl-dot">📋</div>
-        <div class="tl-content">
+      <div class="s-step s-right fade-up">
+        <div class="s-connector s-left-conn"></div>
+        <div class="s-dot">📋</div>
+        <div class="s-content">
           <div class="tl-step">Step 02</div>
           <h3>We Align on the Plan</h3>
           <p>Within 24 hours you'll get a reply confirming the project scope, timeline, and price. We iron out any details so there are zero surprises later.</p>
           <span class="tl-time">Within 24 hours</span>
         </div>
       </div>
-      <div class="tl-item fade-up">
-        <div class="tl-dot">🎨</div>
-        <div class="tl-content">
+      <div class="s-step s-left fade-up">
+        <div class="s-connector s-right-conn"></div>
+        <div class="s-dot">🎨</div>
+        <div class="s-content">
           <div class="tl-step">Step 03</div>
           <h3>Design & Build</h3>
           <p>Work begins immediately. You'll get updates throughout — no radio silence. The first draft is shared for your feedback before anything is finalised.</p>
           <span class="tl-time">2–12 days depending on plan</span>
         </div>
       </div>
-      <div class="tl-item fade-up">
-        <div class="tl-dot">🔄</div>
-        <div class="tl-content">
+      <div class="s-step s-right fade-up">
+        <div class="s-connector s-left-conn"></div>
+        <div class="s-dot">🔄</div>
+        <div class="s-content">
           <div class="tl-step">Step 04</div>
           <h3>Revisions</h3>
           <p>Your feedback is taken seriously. Changes are made fast — colours, copy, layout, anything. We go back and forth until it's exactly right.</p>
           <span class="tl-time">Usually 1–2 rounds</span>
         </div>
       </div>
-      <div class="tl-item fade-up">
-        <div class="tl-dot">🚀</div>
-        <div class="tl-content">
+      <div class="s-step s-left fade-up">
+        <div class="s-dot">🚀</div>
+        <div class="s-content">
           <div class="tl-step">Step 05</div>
           <h3>Launch Day</h3>
           <p>Your site goes live with a real URL. Deployment is fully handled — you don't touch a single setting. Just share the link with the world.</p>
@@ -1583,38 +1648,13 @@
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section style="padding:5rem 0;background:var(--bg2)" id="reviews">
-  <div class="container">
-    <span class="section-label fade-up">Reviews</span>
-    <h2 class="section-title fade-up">What Clients Say</h2>
-    <p class="section-sub fade-up">Real feedback from people I've built for.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:2.5rem">
-      <div class="fade-up" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem">
-        <div style="color:#fbbf24;font-size:1rem;margin-bottom:0.75rem">★★★★★</div>
-        <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">"Delivered my website way faster than expected. Clean design, works perfectly on my phone. Definitely recommending to everyone."</p>
-        <div style="font-size:0.85rem;font-weight:600">— Happy Client</div>
-      </div>
-      <div class="fade-up" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem">
-        <div style="color:#fbbf24;font-size:1rem;margin-bottom:0.75rem">★★★★★</div>
-        <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">"I needed a band website fast. Got exactly what I wanted, with my photos and links all set up. Super professional result."</p>
-        <div style="font-size:0.85rem;font-weight:600">— Music Client</div>
-      </div>
-      <div class="fade-up" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem">
-        <div style="color:#fbbf24;font-size:1rem;margin-bottom:0.75rem">★★★★★</div>
-        <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">"The app built for me has user logins, a database — the full thing. It works perfectly. Incredible value for the price."</p>
-        <div style="font-size:0.85rem;font-weight:600">— App Client</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ABOUT -->
 <section class="about-section" id="about">
   <div class="about-inner">
     <div class="about-visual">
       <div class="av-card fade-up">
-        <div class="av-num">4+</div>
+        <div class="av-num">35+</div>
         <div class="av-label">Projects Shipped</div>
       </div>
       <div class="av-card fade-up fade-up-delay-1">
