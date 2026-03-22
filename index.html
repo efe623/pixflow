@@ -8,32 +8,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── CUSTOM CURSOR ── */
-    html, body, * { cursor: none !important; }
-    #cursor-wrap {
-      position: fixed; top: 0; left: 0; width: 0; height: 0;
-      pointer-events: none; z-index: 2147483647;
-      isolation: isolate;
-    }
-    #cursor-dot {
-      position: absolute;
-      width: 10px; height: 10px; background: #fff; border-radius: 50%;
-      transform: translate(-50%,-50%);
-      box-shadow: 0 0 10px 2px rgba(255,255,255,0.8);
-      transition: width .15s, height .15s, background .15s;
-    }
-    #cursor-ring {
-      position: absolute;
-      width: 40px; height: 40px;
-      border: 2px solid rgba(99,102,241,0.85);
-      border-radius: 50%;
-      transform: translate(-50%,-50%);
-      box-shadow: 0 0 14px rgba(99,102,241,0.5);
-      transition: width .2s, height .2s, border-color .2s;
-    }
-    #cursor-ring.hovering { width: 60px; height: 60px; border-color: rgba(167,139,250,1); background: rgba(99,102,241,0.07); }
-    #cursor-ring.clicking { width: 28px; height: 28px; }
-    .trail-particle { position: absolute; border-radius: 50%; transform: translate(-50%,-50%); }
+    
 
     :root {
       --bg: #0d1117;
@@ -65,8 +40,8 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
-      z-index: 1;
-      opacity: 0.55;
+      z-index: -1;
+      opacity: 0.6;
     }
 
 
@@ -2142,8 +2117,6 @@
       document.getElementById('project-overlay').classList.add('active');
       document.body.style.overflow = 'hidden';
       // Hide cursor while inside iframe — it can't track mouse there
-      document.getElementById('cursor-dot').style.opacity = '0';
-      document.getElementById('cursor-ring').style.opacity = '0';
     }
     function closeProject() {
       document.getElementById('project-overlay').classList.remove('active');
@@ -2152,19 +2125,13 @@
       document.getElementById('example-splash').classList.remove('active');
       clearInterval(window._splashInterval);
       // Restore cursor
-      document.getElementById('cursor-dot').style.opacity = '1';
-      document.getElementById('cursor-ring').style.opacity = '1';
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeProject(); closeCompare(); } });
 
     // Restore cursor when mouse re-enters main page from iframe
     document.getElementById('overlay-bar').addEventListener('mouseenter', () => {
-      document.getElementById('cursor-dot').style.opacity = '1';
-      document.getElementById('cursor-ring').style.opacity = '1';
     });
     document.getElementById('overlay-frame').addEventListener('mouseenter', () => {
-      document.getElementById('cursor-dot').style.opacity = '0';
-      document.getElementById('cursor-ring').style.opacity = '0';
     });
 
     async function submitForm(e) {
@@ -2193,73 +2160,8 @@
     }
   </script>
   <!-- Custom Cursor -->
-  <div id="cursor-wrap">
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
-  </div>
 
   <script>
-    const dot  = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-
-    const TRAIL = 14;
-    const colors = ['#a78bfa','#818cf8','#6366f1','#8b5cf6','#c4b5fd'];
-    const particles = [];
-
-    for (let i = 0; i < TRAIL; i++) {
-      const p = document.createElement('div');
-      p.className = 'trail-particle';
-      const size = Math.max(2, 5.5 - i * 0.28);
-      p.style.cssText = `width:${size}px;height:${size}px;background:${colors[i % colors.length]};opacity:${(1 - i / TRAIL) * 0.7};`;
-      document.getElementById('cursor-wrap').appendChild(p);
-      particles.push({ el: p, x: 0, y: 0 });
-    }
-
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
-    function animate() {
-      // Dot snaps instantly
-      dot.style.left = mx + 'px';
-      dot.style.top  = my + 'px';
-
-      // Ring lags behind
-      rx += (mx - rx) * 0.1;
-      ry += (my - ry) * 0.1;
-      ring.style.left = rx + 'px';
-      ring.style.top  = ry + 'px';
-
-      // Trail particles chain from the ring position
-      particles[0].x += (rx - particles[0].x) * 0.4;
-      particles[0].y += (ry - particles[0].y) * 0.4;
-      for (let i = 1; i < TRAIL; i++) {
-        particles[i].x += (particles[i-1].x - particles[i].x) * 0.4;
-        particles[i].y += (particles[i-1].y - particles[i].y) * 0.4;
-        particles[i].el.style.left = particles[i].x + 'px';
-        particles[i].el.style.top  = particles[i].y + 'px';
-      }
-      particles[0].el.style.left = particles[0].x + 'px';
-      particles[0].el.style.top  = particles[0].y + 'px';
-
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    const interactives = 'a, button, [onclick], input, textarea, select, details, summary, .project-card, .price-card, .step';
-    document.querySelectorAll(interactives).forEach(el => {
-      el.addEventListener('mouseenter', () => { dot.classList.add('hovering'); ring.classList.add('hovering'); });
-      el.addEventListener('mouseleave', () => { dot.classList.remove('hovering'); ring.classList.remove('hovering'); });
-    });
-
-    document.addEventListener('mousedown', () => { dot.classList.add('clicking'); ring.classList.add('clicking'); });
-    document.addEventListener('mouseup',   () => { dot.classList.remove('clicking'); ring.classList.remove('clicking'); });
-
-    const all = [dot, ring, ...particles.map(p => p.el)];
-    document.addEventListener('mouseleave', () => all.forEach(e => e.style.opacity = '0'));
-    document.addEventListener('mouseenter', () => {
-      dot.style.opacity = '1'; ring.style.opacity = '1';
-      particles.forEach((p, i) => p.el.style.opacity = String((1 - i / TRAIL) * 0.7));
-    });
-  </script>
+</script>
 </body>
 </html>
