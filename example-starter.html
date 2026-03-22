@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alex Carter — Photographer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0e0e0e;
+      --text: #f0f0f0;
+      --muted: #888;
+      --accent: #c8a96e;
+      --border: #222;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg); z-index: 10;
+    }
+    .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.05em; color: var(--accent); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 90vh;
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem 3rem;
+    }
+    .hero-left h1 { font-size: 3.5rem; line-height: 1.15; margin-bottom: 1.5rem; }
+    .hero-left h1 span { color: var(--accent); }
+    .hero-left p { color: var(--muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; max-width: 400px; }
+    .btn { display: inline-block; padding: 0.85rem 2rem; background: var(--accent); color: #0e0e0e; font-weight: 700; text-decoration: none; border-radius: 4px; font-family: sans-serif; font-size: 0.9rem; letter-spacing: 0.04em; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.85; }
+
+    .hero-right {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+      overflow: hidden;
+    }
+    .photo-block {
+      background: #1a1a1a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+      min-height: 250px;
+    }
+    .photo-block:nth-child(1) { background: linear-gradient(135deg, #1a1209, #3d2b0e); }
+    .photo-block:nth-child(2) { background: linear-gradient(135deg, #0d1a0d, #1a3320); margin-top: 60px; }
+    .photo-block:nth-child(3) { background: linear-gradient(135deg, #0d0d1a, #1a1a3d); margin-top: -60px; }
+    .photo-block:nth-child(4) { background: linear-gradient(135deg, #1a0d0d, #3d1a1a); }
+
+    section { padding: 5rem 3rem; }
+
+    .about { background: #111; }
+    .about-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+    .about h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .about p { color: var(--muted); line-height: 1.9; font-size: 1rem; }
+
+    .services h2 { font-size: 2rem; margin-bottom: 2.5rem; text-align: center; }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .service-card { border: 1px solid var(--border); padding: 2rem; border-radius: 8px; text-align: center; }
+    .service-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .service-card h3 { font-size: 1rem; margin-bottom: 0.5rem; font-family: sans-serif; }
+    .service-card p { color: var(--muted); font-size: 0.85rem; line-height: 1.7; font-family: sans-serif; }
+
+    .contact-section { background: #111; text-align: center; }
+    .contact-section h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .contact-section p { color: var(--muted); margin-bottom: 2rem; font-size: 1rem; }
+    .contact-email { color: var(--accent); font-family: sans-serif; font-size: 1.1rem; }
+
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.82rem; font-family: sans-serif; }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1rem; }
+      section { padding: 3rem 1.5rem; }
+      .services-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">A.Carter</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-left">
+    <h1>Capturing <span>moments</span> that last forever.</h1>
+    <p>Dubai-based photographer specialising in portraits, events, and lifestyle photography. Every shot tells a story worth keeping.</p>
+    <a href="#contact" class="btn">Book a Session</a>
+  </div>
+  <div class="hero-right">
+    <div class="photo-block">🌅</div>
+    <div class="photo-block">🏙️</div>
+    <div class="photo-block">🌿</div>
+    <div class="photo-block">✨</div>
+  </div>
+</div>
+
+<section class="about" id="about">
+  <div class="about-inner">
+    <h2>About Me</h2>
+    <p>I'm Alex Carter, a professional photographer with over 8 years of experience working across Dubai, London, and New York. My work focuses on authentic storytelling through imagery — whether it's a wedding, a corporate event, or a personal portrait session. I believe every person has a story worth capturing.</p>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <h2>Services</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="icon">📸</div>
+      <h3>Portrait Sessions</h3>
+      <p>Personal branding, headshots, and lifestyle portraits that capture your personality.</p>
+    </div>
+    <div class="service-card">
+      <div class="icon">🎉</div>
+      <h3>Event Photography</h3>
+      <p>Weddings, corporate events, and private gatherings — every moment documented.</p>
+    </div>
+    <div class="service-card">
+      <div class="icon">🌍</div>
+      <h3>Travel & Landscape</h3>
+      <p>Stunning travel and landscape photography for commercial and editorial use.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <h2>Get in Touch</h2>
+  <p>Ready to book a session or just want to say hello?</p>
+  <div class="contact-email">hello@alexcarter.com</div>
+</section>
+
+<footer>© 2025 Alex Carter Photography. All rights reserved.</footer>
+
+</body>
+</html>

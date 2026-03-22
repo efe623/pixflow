@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fynance — Personal Finance Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #07080f;
+      --bg2: #0b0d18;
+      --bg3: #0f1220;
+      --sidebar: #090b14;
+      --card: #0e1022;
+      --card2: #121528;
+      --text: #e4e8ff;
+      --muted: #4a5280;
+      --muted2: #7a82b8;
+      --accent: #6c63ff;
+      --accent2: #a78bfa;
+      --green: #22d3a2;
+      --green-dim: rgba(34,211,162,0.12);
+      --red: #f43f5e;
+      --red-dim: rgba(244,63,94,0.12);
+      --yellow: #fbbf24;
+      --yellow-dim: rgba(251,191,36,0.12);
+      --blue: #38bdf8;
+      --blue-dim: rgba(56,189,248,0.12);
+      --border: rgba(255,255,255,0.06);
+      --radius: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow-x: hidden; }
+
+    /* ───── LANDING ───── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7,8,15,0.92); backdrop-filter: blur(16px);
+      position: sticky; top: 0; z-index: 200;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; font-size: 1.25rem; font-weight: 800; text-decoration: none; }
+    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 16px rgba(108,99,255,0.5); }
+    .logo-text { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted2); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; gap: 0.75rem; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-family: inherit; transition: border-color 0.2s; }
+    .btn-ghost:hover { border-color: var(--accent); }
+    .btn-cta { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; padding: 0.55rem 1.4rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: 0 4px 16px rgba(108,99,255,0.4); transition: opacity 0.2s, transform 0.2s; }
+    .btn-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero { min-height: calc(100vh - 60px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; text-align: center; position: relative; overflow: hidden; }
+    .hero-glow-1 { position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(108,99,255,0.1) 0%, transparent 65%); top: -100px; left: 50%; transform: translateX(-50%); pointer-events: none; }
+    .hero-glow-2 { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(34,211,162,0.06) 0%, transparent 65%); bottom: 0; right: -100px; pointer-events: none; }
+    .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%); }
+
+    .hero-content { position: relative; max-width: 760px; margin-bottom: 3.5rem; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.2); color: var(--accent2); font-size: 0.78rem; font-weight: 600; padding: 0.35rem 1rem; border-radius: 99px; margin-bottom: 1.75rem; }
+    .live-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: livePulse 2s infinite; }
+    @keyframes livePulse { 0%,100%{box-shadow:0 0 0 0 rgba(34,211,162,0.6)} 50%{box-shadow:0 0 0 6px rgba(34,211,162,0)} }
+    .hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.08; margin-bottom: 1.25rem; letter-spacing: -0.03em; }
+    .grad { background: linear-gradient(135deg, var(--accent), var(--accent2), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero p { color: var(--muted2); font-size: 1.1rem; line-height: 1.75; max-width: 520px; margin: 0 auto 2.5rem; }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-big { display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; text-decoration: none; padding: 0.95rem 2.25rem; border-radius: 12px; font-weight: 700; font-size: 1rem; box-shadow: 0 6px 32px rgba(108,99,255,0.45); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border: none; font-family: inherit; }
+    .btn-big:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(108,99,255,0.6); }
+    .btn-big-ghost { display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; color: var(--text); text-decoration: none; padding: 0.95rem 2.25rem; border-radius: 12px; font-weight: 600; font-size: 1rem; border: 1px solid var(--border); transition: border-color 0.2s, background 0.2s; }
+    .btn-big-ghost:hover { border-color: var(--accent); background: rgba(108,99,255,0.06); }
+
+    /* social proof */
+    .social-proof { display: flex; align-items: center; gap: 1rem; justify-content: center; margin-top: 2rem; }
+    .sp-avatars { display: flex; }
+    .sp-av { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--bg); margin-left: -8px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+    .sp-av:first-child { margin-left: 0; }
+    .sp-text { font-size: 0.82rem; color: var(--muted2); }
+    .sp-text strong { color: var(--text); }
+
+    /* ───── DASHBOARD ───── */
+    .dash-wrap { width: 100%; max-width: 1100px; margin: 0 auto; position: relative; }
+    .dash-glow { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 80%; height: 60px; background: var(--accent); filter: blur(60px); opacity: 0.25; pointer-events: none; border-radius: 50%; }
+    .dash-frame { background: var(--bg2); border: 1px solid rgba(108,99,255,0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(108,99,255,0.08); }
+    .dash-titlebar { background: rgba(255,255,255,0.03); padding: 0.7rem 1.25rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--border); }
+    .tb-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .tb-r{background:#ff5f57} .tb-y{background:#febc2e} .tb-g{background:#28c840}
+    .tb-url { flex: 1; text-align: center; }
+    .tb-url-inner { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem 0.9rem; font-size: 0.72rem; color: var(--muted2); }
+    .dash-body { display: grid; grid-template-columns: 220px 1fr; min-height: 580px; }
+
+    /* SIDEBAR */
+    .sidebar { background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+    .sidebar-user { padding: 1.25rem; border-bottom: 1px solid var(--border); }
+    .su-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .su-av { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, #6c63ff, #a78bfa); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; }
+    .su-info { flex: 1; min-width: 0; }
+    .su-name { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .su-plan { display: inline-block; font-size: 0.6rem; font-weight: 700; background: rgba(108,99,255,0.2); color: var(--accent2); padding: 0.15rem 0.5rem; border-radius: 4px; letter-spacing: 0.04em; }
+    .net-worth-mini { background: var(--green-dim); border: 1px solid rgba(34,211,162,0.15); border-radius: 8px; padding: 0.6rem 0.75rem; }
+    .nwm-label { font-size: 0.6rem; font-weight: 600; color: var(--green); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.2rem; }
+    .nwm-val { font-size: 1.1rem; font-weight: 800; }
+    .nwm-change { font-size: 0.65rem; color: var(--green); margin-top: 0.15rem; }
+    .sb-section { padding: 0.75rem 0; }
+    .sb-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0 1rem; margin-bottom: 0.3rem; }
+    .sb-item { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 1rem; font-size: 0.82rem; color: var(--muted2); cursor: pointer; transition: all 0.15s; position: relative; user-select: none; }
+    .sb-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+    .sb-item.active { background: rgba(108,99,255,0.1); color: var(--accent2); }
+    .sb-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--accent); border-radius: 0 3px 3px 0; }
+    .sb-ico { font-size: 0.9rem; width: 18px; text-align: center; }
+    .sb-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 0.58rem; font-weight: 700; padding: 0.1rem 0.42rem; border-radius: 99px; }
+    .sb-badge-yellow { background: var(--yellow); color: #000; }
+    .sidebar-bottom { margin-top: auto; border-top: 1px solid var(--border); padding: 0.75rem 0; }
+
+    /* MAIN */
+    .main { background: var(--bg2); padding: 1.5rem; overflow: auto; }
+    .main-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; }
+    .main-header-left h2 { font-size: 1rem; font-weight: 800; margin-bottom: 0.2rem; }
+    .main-header-left p { font-size: 0.72rem; color: var(--muted2); }
+    .main-header-right { display: flex; gap: 0.4rem; align-items: center; flex-shrink: 0; }
+    .period-btn { background: transparent; border: 1px solid var(--border); color: var(--muted2); padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.7rem; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .period-btn.active { background: rgba(108,99,255,0.2); border-color: rgba(108,99,255,0.35); color: var(--accent2); }
+    .add-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; padding: 0.35rem 0.85rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+    /* STAT CARDS */
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 0.75rem; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.2s; cursor: default; }
+    .stat-card:hover { border-color: rgba(108,99,255,0.25); transform: translateY(-2px); }
+    .stat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: var(--radius) var(--radius) 0 0; }
+    .sc-green::after { background: linear-gradient(90deg, var(--green), transparent); }
+    .sc-red::after { background: linear-gradient(90deg, var(--red), transparent); }
+    .sc-blue::after { background: linear-gradient(90deg, var(--blue), transparent); }
+    .sc-yellow::after { background: linear-gradient(90deg, var(--yellow), transparent); }
+    .sc-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.65rem; }
+    .sc-label { font-size: 0.68rem; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; }
+    .sc-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+    .si-g{background:var(--green-dim)} .si-r{background:var(--red-dim)} .si-b{background:var(--blue-dim)} .si-y{background:var(--yellow-dim)}
+    .sc-amount { font-size: 1.35rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.35rem; }
+    .sc-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 99px; margin-bottom: 0.4rem; overflow: hidden; }
+    .sc-bar-fill { height: 100%; border-radius: 99px; }
+    .sc-change { font-size: 0.67rem; font-weight: 600; display: flex; align-items: center; gap: 0.25rem; }
+    .up { color: var(--green); } .dn { color: var(--red); }
+
+    /* CHART ROW */
+    .chart-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; }
+    .cc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .cc-header h3 { font-size: 0.82rem; font-weight: 700; }
+    .cc-legend { display: flex; gap: 0.75rem; }
+    .leg-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.64rem; color: var(--muted2); }
+    .leg-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .chart-tabs { display: flex; gap: 0.3rem; }
+    .ct { font-size: 0.65rem; padding: 0.2rem 0.55rem; border-radius: 5px; cursor: pointer; border: 1px solid var(--border); color: var(--muted2); background: transparent; font-family: inherit; }
+    .ct.on { background: rgba(108,99,255,0.15); border-color: rgba(108,99,255,0.3); color: var(--accent2); }
+
+    /* Area chart */
+    .area-chart { width: 100%; height: 110px; }
+    .x-axis { display: flex; justify-content: space-between; padding: 0 4px; margin-top: 4px; }
+    .x-axis span { font-size: 0.58rem; color: var(--muted); }
+
+    /* Donut */
+    .donut-wrap { display: flex; align-items: center; gap: 1rem; padding-top: 0.25rem; }
+    .donut-svg { width: 95px; height: 95px; flex-shrink: 0; }
+    .donut-info { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+    .di-row { display: flex; align-items: center; gap: 0.4rem; }
+    .di-dot { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
+    .di-name { font-size: 0.68rem; color: var(--muted2); flex: 1; }
+    .di-pct { font-size: 0.7rem; font-weight: 700; }
+
+    /* BOTTOM ROW */
+    .bottom-row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0.75rem; }
+    .txn-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; }
+    .txn-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
+    .txn-header h3 { font-size: 0.82rem; font-weight: 700; }
+    .txn-see { font-size: 0.68rem; color: var(--accent2); cursor: pointer; }
+    .txn-filter { display: flex; gap: 0.3rem; margin-bottom: 0.75rem; }
+    .tf { font-size: 0.62rem; padding: 0.18rem 0.5rem; border-radius: 5px; cursor: pointer; border: 1px solid var(--border); color: var(--muted2); background: transparent; font-family: inherit; }
+    .tf.on { background: var(--red-dim); border-color: rgba(244,63,94,0.25); color: var(--red); }
+    .txn-list { display: flex; flex-direction: column; gap: 0.35rem; }
+    .txn-item { display: flex; align-items: center; gap: 0.65rem; padding: 0.45rem 0.5rem; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+    .txn-item:hover { background: rgba(255,255,255,0.03); }
+    .ti-icon { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+    .ti-info { flex: 1; min-width: 0; }
+    .ti-name { font-size: 0.78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ti-cat { font-size: 0.62rem; color: var(--muted); }
+    .ti-right { text-align: right; flex-shrink: 0; }
+    .ti-amount { font-size: 0.8rem; font-weight: 700; }
+    .ti-date { font-size: 0.6rem; color: var(--muted); }
+
+    /* BUDGET CARD */
+    .budget-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; }
+    .budget-card h3 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.85rem; }
+    .budget-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .budget-item { }
+    .bi-top { display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+    .bi-name { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; }
+    .bi-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .bi-amounts { font-size: 0.68rem; color: var(--muted2); }
+    .bi-bar { height: 5px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
+    .bi-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+    .bi-over { background: var(--red); }
+    .bi-warn { background: var(--yellow); }
+
+    /* ───── FEATURES SECTION ───── */
+    .features { padding: 6rem 2rem; }
+    .sec-badge { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.2); padding: 0.3rem 0.85rem; border-radius: 99px; margin-bottom: 1rem; }
+    .sec-title { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 900; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    .sec-sub { color: var(--muted2); font-size: 1rem; line-height: 1.7; max-width: 500px; }
+    .features-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .features-text { }
+    .feat-list { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+    .feat-item { display: flex; gap: 1rem; }
+    .feat-ico { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; border: 1px solid var(--border); }
+    .feat-body h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .feat-body p { font-size: 0.82rem; color: var(--muted2); line-height: 1.6; }
+    .features-visual { display: grid; gap: 0.75rem; }
+    .fv-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; transition: border-color 0.3s; }
+    .fv-card:hover { border-color: rgba(108,99,255,0.3); }
+
+    /* goal card */
+    .goal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .goal-header h4 { font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+    .goal-pct { font-size: 0.78rem; font-weight: 700; color: var(--green); }
+    .goal-bar { height: 8px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin-bottom: 0.6rem; }
+    .goal-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--green), #38d9a9); box-shadow: 0 0 8px rgba(34,211,162,0.4); }
+    .goal-footer { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--muted2); }
+    .goal-footer strong { color: var(--text); }
+
+    /* spending ring */
+    .ring-card-inner { display: flex; align-items: center; gap: 1.25rem; }
+    .ring-info { }
+    .ring-info h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .ring-row { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; font-size: 0.7rem; color: var(--muted2); }
+    .rr-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .rr-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
+    .rr-fill { height: 100%; border-radius: 99px; }
+    .rr-val { font-weight: 600; color: var(--text); font-size: 0.7rem; width: 32px; text-align: right; }
+
+    /* alert card */
+    .alert-card { display: flex; flex-direction: column; gap: 0.5rem; }
+    .alert-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.6rem 0.75rem; border-radius: 8px; font-size: 0.75rem; }
+    .alert-g { background: var(--green-dim); border: 1px solid rgba(34,211,162,0.15); }
+    .alert-y { background: var(--yellow-dim); border: 1px solid rgba(251,191,36,0.15); }
+    .alert-r { background: var(--red-dim); border: 1px solid rgba(244,63,94,0.15); }
+    .alert-ico { font-size: 0.95rem; flex-shrink: 0; margin-top: 1px; }
+    .alert-text strong { display: block; font-size: 0.74rem; font-weight: 700; margin-bottom: 0.1rem; }
+    .alert-text span { color: var(--muted2); font-size: 0.68rem; }
+
+    /* ───── PRICING ───── */
+    .pricing-section { padding: 6rem 2rem; background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,0.05) 0%, transparent 70%); }
+    .pricing-inner { max-width: 1100px; margin: 0 auto; }
+    .pricing-header { text-align: center; margin-bottom: 3rem; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .price-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 2rem; display: flex; flex-direction: column; position: relative; transition: transform 0.3s, border-color 0.3s; }
+    .price-card:hover { transform: translateY(-5px); }
+    .price-card.pop { border-color: rgba(108,99,255,0.4); background: linear-gradient(160deg, rgba(108,99,255,0.07) 0%, var(--card) 60%); box-shadow: 0 0 0 1px rgba(108,99,255,0.1), 0 12px 50px rgba(108,99,255,0.15); }
+    .pop-tag { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.27rem 0.9rem; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+    .pc-tier { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .pc-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; }
+    .pc-price { display: flex; align-items: flex-end; gap: 0.25rem; margin-bottom: 0.3rem; }
+    .pc-amount { font-size: 3rem; font-weight: 900; line-height: 1; letter-spacing: -0.04em; }
+    .price-card.pop .pc-amount { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .pc-per { font-size: 0.82rem; color: var(--muted2); padding-bottom: 0.5rem; }
+    .pc-note { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .pc-divider { height: 1px; background: var(--border); margin: 1rem 0 1.25rem; }
+    .pc-features { list-style: none; flex: 1; display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 2rem; }
+    .pc-features li { display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.82rem; color: var(--muted2); }
+    .pc-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 0.05rem; }
+    .pc-btn { display: block; text-align: center; padding: 0.85rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; border: none; font-family: inherit; transition: opacity 0.2s, transform 0.2s; text-decoration: none; }
+    .pc-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .pb-fill { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 20px rgba(108,99,255,0.4); }
+    .pb-out { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+    /* ───── CTA ───── */
+    .cta-section { padding: 6rem 2rem; text-align: center; position: relative; overflow: hidden; }
+    .cta-glow { position: absolute; width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(108,99,255,0.12) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+    .cta-section h2 { position: relative; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 1.25rem; }
+    .cta-section p { position: relative; color: var(--muted2); font-size: 1.05rem; max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.7; }
+    .cta-btns { position: relative; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .cta-trust { position: relative; display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; }
+    .trust-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--muted2); }
+    .trust-item::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+    footer { background: var(--sidebar); border-top: 1px solid var(--border); padding: 2rem 2.5rem; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 2rem; }
+    .fl-logo { display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 1.1rem; margin-bottom: 0.75rem; }
+    .fl-logo .logo-text { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .fl-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
+    .fc-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.85rem; }
+    .fc-links { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+    .fc-links a { color: var(--muted2); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+    .fc-links a:hover { color: var(--text); }
+    .footer-bottom { background: var(--sidebar); border-top: 1px solid var(--border); padding: 1.25rem 2.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .footer-bottom p { font-size: 0.75rem; color: var(--muted); }
+
+    @media (max-width: 900px) {
+      .dash-body { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      .chart-row, .bottom-row { grid-template-columns: 1fr; }
+      .features-inner { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      footer { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-icon">💰</div>
+    <span class="logo-text">Fynance</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#demo">Dashboard</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#cta">Get Started</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-ghost">Log In</button>
+    <button class="btn-cta">Start Free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><div class="live-dot"></div> Live dashboard · updates every 30s</div>
+    <h1>Your finances,<br /><span class="grad">crystal clear.</span></h1>
+    <p>Connect every account, track every dollar, and build wealth — automatically. The smartest way to manage your money.</p>
+    <div class="hero-btns">
+      <button class="btn-big">🚀 Try the Dashboard Free</button>
+      <a href="#features" class="btn-big-ghost">See How It Works →</a>
+    </div>
+    <div class="social-proof">
+      <div class="sp-avatars">
+        <div class="sp-av" style="background:linear-gradient(135deg,#6c63ff,#a78bfa)">J</div>
+        <div class="sp-av" style="background:linear-gradient(135deg,#22d3a2,#06b6d4)">S</div>
+        <div class="sp-av" style="background:linear-gradient(135deg,#f43f5e,#fb923c)">M</div>
+        <div class="sp-av" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)">A</div>
+        <div class="sp-av" style="background:linear-gradient(135deg,#38bdf8,#818cf8)">K</div>
+      </div>
+      <div class="sp-text">Trusted by <strong>12,400+</strong> people worldwide</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dash-wrap" id="demo">
+    <div class="dash-glow"></div>
+    <div class="dash-frame">
+      <div class="dash-titlebar">
+        <div class="tb-dot tb-r"></div>
+        <div class="tb-dot tb-y"></div>
+        <div class="tb-dot tb-g"></div>
+        <div class="tb-url">
+          <div class="tb-url-inner">🔒 app.fynance.io/dashboard</div>
+        </div>
+      </div>
+      <div class="dash-body">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+          <div class="sidebar-user">
+            <div class="su-top">
+              <div class="su-av">J</div>
+              <div class="su-info">
+                <div class="su-name">Jamie Chen</div>
+                <div class="su-plan">PRO PLAN</div>
+              </div>
+            </div>
+            <div class="net-worth-mini">
+              <div class="nwm-label">Net Worth</div>
+              <div class="nwm-val" id="nw-live">$48,290</div>
+              <div class="nwm-change">▲ +$1,842 this month</div>
+            </div>
+          </div>
+          <div class="sb-section">
+            <div class="sb-label">Main</div>
+            <div class="sb-item active" onclick="setActive(this)"><span class="sb-ico">📊</span> Overview</div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">💳</span> Transactions <span class="sb-badge">5</span></div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">🏦</span> Accounts</div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">📈</span> Investments <span class="sb-badge sb-badge-yellow">!</span></div>
+          </div>
+          <div class="sb-section">
+            <div class="sb-label">Planning</div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">🎯</span> Budgets</div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">🏆</span> Goals</div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">📑</span> Reports</div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">🔔</span> Alerts</div>
+          </div>
+          <div class="sidebar-bottom">
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">⚙️</span> Settings</div>
+            <div class="sb-item" onclick="setActive(this)"><span class="sb-ico">❓</span> Help</div>
+          </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main">
+          <div class="main-header">
+            <div class="main-header-left">
+              <h2>Good morning, Jamie 👋</h2>
+              <p>Here's your financial snapshot for March 2026</p>
+            </div>
+            <div class="main-header-right">
+              <button class="period-btn">7D</button>
+              <button class="period-btn active">1M</button>
+              <button class="period-btn">3M</button>
+              <button class="period-btn">1Y</button>
+              <button class="add-btn">+ Add</button>
+            </div>
+          </div>
+
+          <!-- STAT CARDS -->
+          <div class="stat-row">
+            <div class="stat-card sc-green">
+              <div class="sc-top"><div class="sc-label">TOTAL BALANCE</div><div class="sc-icon si-g">💰</div></div>
+              <div class="sc-amount">$48,290</div>
+              <div class="sc-bar"><div class="sc-bar-fill" style="width:76%;background:var(--green)"></div></div>
+              <div class="sc-change up">▲ +4.2% vs last month</div>
+            </div>
+            <div class="stat-card sc-blue">
+              <div class="sc-top"><div class="sc-label">MONTHLY INCOME</div><div class="sc-icon si-b">📥</div></div>
+              <div class="sc-amount">$6,400</div>
+              <div class="sc-bar"><div class="sc-bar-fill" style="width:100%;background:var(--blue)"></div></div>
+              <div class="sc-change up">▲ +$200 vs Feb</div>
+            </div>
+            <div class="stat-card sc-red">
+              <div class="sc-top"><div class="sc-label">MONTHLY SPEND</div><div class="sc-icon si-r">📤</div></div>
+              <div class="sc-amount">$3,842</div>
+              <div class="sc-bar"><div class="sc-bar-fill" style="width:60%;background:var(--red)"></div></div>
+              <div class="sc-change dn">▼ $342 over budget</div>
+            </div>
+            <div class="stat-card sc-yellow">
+              <div class="sc-top"><div class="sc-label">SAVINGS RATE</div><div class="sc-icon si-y">🎯</div></div>
+              <div class="sc-amount">40%</div>
+              <div class="sc-bar"><div class="sc-bar-fill" style="width:40%;background:var(--yellow)"></div></div>
+              <div class="sc-change up">▲ +3% vs target</div>
+            </div>
+          </div>
+
+          <!-- CHARTS -->
+          <div class="chart-row">
+            <div class="chart-card">
+              <div class="cc-header">
+                <h3>Cash Flow</h3>
+                <div class="cc-legend">
+                  <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div> Income</div>
+                  <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div> Expenses</div>
+                </div>
+                <div class="chart-tabs">
+                  <button class="ct">Bar</button>
+                  <button class="ct on">Area</button>
+                </div>
+              </div>
+              <svg class="area-chart" viewBox="0 0 360 110" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="ig" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22d3a2" stop-opacity="0.3"/><stop offset="100%" stop-color="#22d3a2" stop-opacity="0"/></linearGradient>
+                  <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f43f5e" stop-opacity="0.25"/><stop offset="100%" stop-color="#f43f5e" stop-opacity="0"/></linearGradient>
+                </defs>
+                <!-- grid -->
+                <line x1="0" y1="25" x2="360" y2="25" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+                <line x1="0" y1="55" x2="360" y2="55" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+                <line x1="0" y1="85" x2="360" y2="85" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+                <!-- income area -->
+                <path d="M0,30 C45,20 90,25 135,15 C180,5 225,18 270,10 C315,3 340,8 360,5 L360,110 L0,110 Z" fill="url(#ig)"/>
+                <path d="M0,30 C45,20 90,25 135,15 C180,5 225,18 270,10 C315,3 340,8 360,5" fill="none" stroke="#22d3a2" stroke-width="2" stroke-linecap="round"/>
+                <!-- expense area -->
+                <path d="M0,60 C45,55 90,65 135,50 C180,42 225,58 270,48 C315,40 340,52 360,45 L360,110 L0,110 Z" fill="url(#eg)"/>
+                <path d="M0,60 C45,55 90,65 135,50 C180,42 225,58 270,48 C315,40 340,52 360,45" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round"/>
+                <!-- dots -->
+                <circle cx="135" cy="15" r="3.5" fill="#22d3a2"/>
+                <circle cx="270" cy="10" r="3.5" fill="#22d3a2"/>
+                <circle cx="135" cy="50" r="3.5" fill="#f43f5e"/>
+              </svg>
+              <div class="x-axis">
+                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="cc-header"><h3>By Category</h3></div>
+              <div class="donut-wrap">
+                <svg class="donut-svg" viewBox="0 0 95 95">
+                  <circle cx="47.5" cy="47.5" r="37" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="14"/>
+                  <circle cx="47.5" cy="47.5" r="37" fill="none" stroke="#6c63ff" stroke-width="14" stroke-dasharray="93 139" stroke-dashoffset="0" transform="rotate(-90 47.5 47.5)"/>
+                  <circle cx="47.5" cy="47.5" r="37" fill="none" stroke="#22d3a2" stroke-width="14" stroke-dasharray="55 177" stroke-dashoffset="-93" transform="rotate(-90 47.5 47.5)"/>
+                  <circle cx="47.5" cy="47.5" r="37" fill="none" stroke="#f43f5e" stroke-width="14" stroke-dasharray="42 190" stroke-dashoffset="-148" transform="rotate(-90 47.5 47.5)"/>
+                  <circle cx="47.5" cy="47.5" r="37" fill="none" stroke="#fbbf24" stroke-width="14" stroke-dasharray="42 190" stroke-dashoffset="-190" transform="rotate(-90 47.5 47.5)"/>
+                  <text x="47.5" y="44" text-anchor="middle" fill="white" font-size="8" font-weight="800" font-family="sans-serif">$3,842</text>
+                  <text x="47.5" y="54" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="5.5" font-family="sans-serif">this month</text>
+                </svg>
+                <div class="donut-info">
+                  <div class="di-row"><div class="di-dot" style="background:#6c63ff"></div><span class="di-name">Housing</span><span class="di-pct" style="color:#a78bfa">40%</span></div>
+                  <div class="di-row"><div class="di-dot" style="background:#22d3a2"></div><span class="di-name">Food</span><span class="di-pct" style="color:#22d3a2">24%</span></div>
+                  <div class="di-row"><div class="di-dot" style="background:#f43f5e"></div><span class="di-name">Transport</span><span class="di-pct" style="color:#f43f5e">18%</span></div>
+                  <div class="di-row"><div class="di-dot" style="background:#fbbf24"></div><span class="di-name">Other</span><span class="di-pct" style="color:#fbbf24">18%</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTTOM ROW -->
+          <div class="bottom-row">
+            <div class="txn-card">
+              <div class="txn-header"><h3>Recent Transactions</h3><div class="txn-see">View all →</div></div>
+              <div class="txn-filter">
+                <button class="tf">All</button>
+                <button class="tf on">Expenses</button>
+                <button class="tf">Income</button>
+              </div>
+              <div class="txn-list">
+                <div class="txn-item">
+                  <div class="ti-icon" style="background:rgba(56,189,248,0.12)">🛒</div>
+                  <div class="ti-info"><div class="ti-name">Carrefour Hypermarket</div><div class="ti-cat">🏷️ Groceries</div></div>
+                  <div class="ti-right"><div class="ti-amount dn">-$84.50</div><div class="ti-date">Today</div></div>
+                </div>
+                <div class="txn-item">
+                  <div class="ti-icon" style="background:rgba(108,99,255,0.12)">🎬</div>
+                  <div class="ti-info"><div class="ti-name">Netflix Premium</div><div class="ti-cat">🎮 Entertainment</div></div>
+                  <div class="ti-right"><div class="ti-amount dn">-$22.99</div><div class="ti-date">Mar 22</div></div>
+                </div>
+                <div class="txn-item">
+                  <div class="ti-icon" style="background:rgba(251,191,36,0.12)">☕</div>
+                  <div class="ti-info"><div class="ti-name">Starbucks</div><div class="ti-cat">🍽️ Food & Drink</div></div>
+                  <div class="ti-right"><div class="ti-amount dn">-$9.80</div><div class="ti-date">Mar 21</div></div>
+                </div>
+                <div class="txn-item">
+                  <div class="ti-icon" style="background:rgba(244,63,94,0.12)">⛽</div>
+                  <div class="ti-info"><div class="ti-name">ADNOC Petrol</div><div class="ti-cat">🚗 Transport</div></div>
+                  <div class="ti-right"><div class="ti-amount dn">-$65.00</div><div class="ti-date">Mar 20</div></div>
+                </div>
+                <div class="txn-item">
+                  <div class="ti-icon" style="background:rgba(34,211,162,0.12)">💼</div>
+                  <div class="ti-info"><div class="ti-name">Salary — Acme Corp</div><div class="ti-cat">💰 Income</div></div>
+                  <div class="ti-right"><div class="ti-amount up">+$6,400</div><div class="ti-date">Mar 1</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:0.75rem">
+              <!-- GOALS -->
+              <div class="fv-card">
+                <div class="goal-header">
+                  <h4>🏠 House Deposit</h4>
+                  <span class="goal-pct">68%</span>
+                </div>
+                <div class="goal-bar"><div class="goal-fill" style="width:68%"></div></div>
+                <div class="goal-footer"><span>Saved <strong>$34,000</strong></span><span>Goal: <strong>$50,000</strong></span></div>
+              </div>
+              <div class="fv-card">
+                <div class="goal-header">
+                  <h4>✈️ Japan Trip</h4>
+                  <span class="goal-pct" style="color:var(--blue)">45%</span>
+                </div>
+                <div class="goal-bar"><div class="goal-fill" style="width:45%;background:linear-gradient(90deg,var(--blue),#818cf8)"></div></div>
+                <div class="goal-footer"><span>Saved <strong>$2,250</strong></span><span>Goal: <strong>$5,000</strong></span></div>
+              </div>
+              <!-- ALERTS -->
+              <div class="fv-card">
+                <div class="alert-card">
+                  <div class="alert-item alert-g"><div class="alert-ico">✅</div><div class="alert-text"><strong>Salary received</strong><span>$6,400 deposited today</span></div></div>
+                  <div class="alert-item alert-y"><div class="alert-ico">⚠️</div><div class="alert-text"><strong>Budget warning</strong><span>Food 89% used this month</span></div></div>
+                  <div class="alert-item alert-r"><div class="alert-ico">🔴</div><div class="alert-text"><strong>Unusual spend</strong><span>$342 over dining budget</span></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="features-text">
+      <div class="sec-badge">Features</div>
+      <h2 class="sec-title">Everything you need to build wealth.</h2>
+      <p class="sec-sub">Fynance connects all your financial data in one place and turns it into clear, actionable insights.</p>
+      <div class="feat-list">
+        <div class="feat-item">
+          <div class="feat-ico" style="background:var(--green-dim);border-color:rgba(34,211,162,0.2)">🔗</div>
+          <div class="feat-body"><h4>Connect All Accounts</h4><p>Bank accounts, credit cards, investments — all synced in real-time. One dashboard, zero switching.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-ico" style="background:var(--blue-dim);border-color:rgba(56,189,248,0.2)">🤖</div>
+          <div class="feat-body"><h4>AI-Powered Categorisation</h4><p>Every transaction sorted automatically with 98% accuracy. No more manual tagging.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-ico" style="background:var(--yellow-dim);border-color:rgba(251,191,36,0.2)">🎯</div>
+          <div class="feat-body"><h4>Smart Budgets & Goals</h4><p>Set targets, track progress, and get alerts before you overspend. Saving on autopilot.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-ico" style="background:var(--red-dim);border-color:rgba(244,63,94,0.2)">🔐</div>
+          <div class="feat-body"><h4>Bank-Level Security</h4><p>256-bit encryption, biometric login, and read-only access. Your data is never at risk.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="features-visual">
+      <div class="fv-card" style="background:var(--card)">
+        <div class="goal-header"><h4>🏆 Monthly Goals</h4><span class="goal-pct">On Track</span></div>
+        <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:0.25rem">
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;font-size:0.72rem"><span style="color:var(--muted2)">🏠 Rent</span><span>$1,500 / $1,500</span></div><div class="goal-bar"><div class="goal-fill" style="width:100%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;font-size:0.72rem"><span style="color:var(--muted2)">🍔 Food</span><span>$712 / $800</span></div><div class="goal-bar"><div class="goal-fill" style="width:89%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;font-size:0.72rem"><span style="color:var(--muted2)">🚗 Transport</span><span>$488 / $400</span></div><div class="goal-bar" style="background:var(--red-dim)"><div class="goal-fill bi-over" style="width:100%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;font-size:0.72rem"><span style="color:var(--muted2)">🎮 Entertainment</span><span>$180 / $300</span></div><div class="goal-bar"><div class="goal-fill" style="width:60%;background:linear-gradient(90deg,var(--blue),#818cf8)"></div></div></div>
+        </div>
+      </div>
+      <div class="fv-card" style="background:var(--card)">
+        <h4 style="font-size:0.82rem;font-weight:700;margin-bottom:0.85rem">📱 Connected Accounts</h4>
+        <div style="display:flex;flex-direction:column;gap:0.5rem">
+          <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(34,211,162,0.15);display:flex;align-items:center;justify-content:center;font-size:0.85rem">🏦</div>
+            <div style="flex:1"><div style="font-size:0.75rem;font-weight:600">Emirates NBD</div><div style="font-size:0.62rem;color:var(--muted)">Checking · ••• 4821</div></div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--green)">$12,450</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(56,189,248,0.15);display:flex;align-items:center;justify-content:center;font-size:0.85rem">💳</div>
+            <div style="flex:1"><div style="font-size:0.75rem;font-weight:600">ADCB Credit Card</div><div style="font-size:0.62rem;color:var(--muted)">Credit · ••• 7732</div></div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--red)">-$1,240</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(251,191,36,0.15);display:flex;align-items:center;justify-content:center;font-size:0.85rem">📈</div>
+            <div style="flex:1"><div style="font-size:0.75rem;font-weight:600">Saxo Investments</div><div style="font-size:0.62rem;color:var(--muted)">Portfolio · stocks</div></div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--yellow)">$37,080</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="pricing-header">
+      <div class="sec-badge">Pricing</div>
+      <h2 class="sec-title">Start free. Scale when ready.</h2>
+      <p class="sec-sub" style="margin:0 auto">No hidden fees, no credit card required to start.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="pc-tier">Starter</div>
+        <div class="pc-name">Free</div>
+        <div class="pc-price"><div class="pc-amount">$0</div></div>
+        <div class="pc-note">Forever free · no card required</div>
+        <div class="pc-divider"></div>
+        <ul class="pc-features">
+          <li>2 connected accounts</li>
+          <li>60 days transaction history</li>
+          <li>Basic spending charts</li>
+          <li>Monthly budget tracking</li>
+          <li>Email support</li>
+        </ul>
+        <a href="#" class="pc-btn pb-out">Get Started Free</a>
+      </div>
+      <div class="price-card pop">
+        <div class="pop-tag">⭐ Most Popular</div>
+        <div class="pc-tier">Pro</div>
+        <div class="pc-name">Personal</div>
+        <div class="pc-price"><div class="pc-amount">$9</div><div class="pc-per">/mo</div></div>
+        <div class="pc-note">Billed monthly · cancel anytime</div>
+        <div class="pc-divider"></div>
+        <ul class="pc-features">
+          <li>Unlimited accounts</li>
+          <li>Full transaction history</li>
+          <li>AI smart categorisation</li>
+          <li>Goals & savings tracking</li>
+          <li>Smart alerts & notifications</li>
+          <li>Investment portfolio tracker</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="pc-btn pb-fill">Start 14-Day Free Trial</a>
+      </div>
+      <div class="price-card">
+        <div class="pc-tier">Family</div>
+        <div class="pc-name">Household</div>
+        <div class="pc-price"><div class="pc-amount">$19</div><div class="pc-per">/mo</div></div>
+        <div class="pc-note">Up to 5 members</div>
+        <div class="pc-divider"></div>
+        <ul class="pc-features">
+          <li>Everything in Pro</li>
+          <li>5 family member accounts</li>
+          <li>Shared budgets & goals</li>
+          <li>Family net worth dashboard</li>
+          <li>Parental spending overview</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <a href="#" class="pc-btn pb-out">Get Family Plan</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="cta-glow"></div>
+  <h2>Your money deserves<br /><span class="grad">a smarter home.</span></h2>
+  <p>Join 12,400+ people who've already taken control of their finances with Fynance.</p>
+  <div class="cta-btns">
+    <button class="btn-big">🚀 Create Free Account</button>
+    <a href="#demo" class="btn-big-ghost">See the Dashboard →</a>
+  </div>
+  <div class="cta-trust">
+    <div class="trust-item">No credit card required</div>
+    <div class="trust-item">256-bit encryption</div>
+    <div class="trust-item">Cancel anytime</div>
+    <div class="trust-item">GDPR compliant</div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="fl-logo"><div class="logo-icon">💰</div><span class="logo-text">Fynance</span></div>
+    <div class="fl-desc">The smartest way to manage your personal finances. Connect, track, and grow your wealth — all in one place.</div>
+  </div>
+  <div>
+    <div class="fc-title">Product</div>
+    <ul class="fc-links">
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Pricing</a></li>
+      <li><a href="#">Security</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="fc-title">Company</div>
+    <ul class="fc-links">
+      <li><a href="#">About</a></li>
+      <li><a href="#">Blog</a></li>
+      <li><a href="#">Careers</a></li>
+      <li><a href="#">Press</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="fc-title">Support</div>
+    <ul class="fc-links">
+      <li><a href="#">Help Centre</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2025 Fynance Inc. All rights reserved.</p>
+  <p>🔒 Bank-level security · SOC 2 Type II certified</p>
+</div>
+
+<script>
+  // Sidebar active state
+  function setActive(el) {
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+  // Period button toggle
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  // Chart tab toggle
+  document.querySelectorAll('.ct').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ct').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+    });
+  });
+  // Transaction filter toggle
+  document.querySelectorAll('.tf').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tf').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+    });
+  });
+  // Live net worth counter animation
+  function animateCounter(el, start, end, duration) {
+    let startTime = null;
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const val = Math.floor(progress * (end - start) + start);
+      el.textContent = '$' + val.toLocaleString();
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  // Animate on load
+  setTimeout(() => {
+    const el = document.getElementById('nw-live');
+    if (el) animateCounter(el, 47000, 48290, 1500);
+  }, 800);
+</script>
+</body>
+</html>
