@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Pixflow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --bg2: #161b22; --bg3: #1c2230;
+      --accent1: #6366f1; --accent2: #8b5cf6; --accent3: #a78bfa;
+      --text: #e6edf3; --muted: #8b949e; --border: #30363d;
+      --card: #161b22; --radius: 16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 2rem;
+      background: rgba(13,17,23,0.9); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, var(--accent1), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
+    .nav-back { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+    .nav-back:hover { color: var(--text); }
+
+    /* HERO */
+    .blog-hero { padding: 5rem 2rem 3rem; text-align: center; background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99,102,241,0.12) 0%, transparent 70%); }
+    .blog-hero .label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent1); margin-bottom: 1rem; }
+    .blog-hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 1rem; }
+    .blog-hero p { color: var(--muted); max-width: 500px; margin: 0 auto 2rem; font-size: 1rem; line-height: 1.7; }
+    .blog-count { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color: var(--accent3); font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem; border-radius: 99px; }
+
+    /* FILTER TAGS */
+    .filters { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); }
+    .filter-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--muted); padding: 0.4rem 1rem; border-radius: 99px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .filter-btn:hover, .filter-btn.active { background: rgba(99,102,241,0.15); border-color: var(--accent1); color: var(--accent3); }
+
+    /* BLOG GRID */
+    .blog-grid-section { padding: 3rem 2rem 6rem; max-width: 1100px; margin: 0 auto; }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+
+    .blog-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; cursor: pointer;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .blog-card:hover { transform: translateY(-5px); border-color: var(--accent1); box-shadow: 0 12px 40px rgba(99,102,241,0.15); }
+    .blog-thumb { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; }
+    .bt-1 { background: linear-gradient(135deg, #0d1433, #1a2666); }
+    .bt-2 { background: linear-gradient(135deg, #130d33, #2d1a66); }
+    .bt-3 { background: linear-gradient(135deg, #0d2633, #1a4d66); }
+    .bt-4 { background: linear-gradient(135deg, #1a0d33, #3d1a66); }
+    .bt-5 { background: linear-gradient(135deg, #0d1a33, #1a3d66); }
+    .bt-6 { background: linear-gradient(135deg, #1a330d, #2d661a); }
+    .bt-7 { background: linear-gradient(135deg, #33190d, #663a1a); }
+    .blog-body { padding: 1.5rem; }
+    .blog-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .blog-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent3); background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.2); padding: 0.2rem 0.6rem; border-radius: 4px; }
+    .blog-date { font-size: 0.72rem; color: var(--muted); }
+    .blog-read-time { font-size: 0.72rem; color: var(--muted); margin-left: auto; }
+    .blog-card h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.6rem; line-height: 1.4; }
+    .blog-card p { color: var(--muted); font-size: 0.84rem; line-height: 1.65; margin-bottom: 1.25rem; }
+    .read-btn { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--accent3); font-size: 0.82rem; font-weight: 600; text-decoration: none; border: 1px solid rgba(167,139,250,0.25); padding: 0.45rem 1rem; border-radius: 8px; transition: background 0.2s, border-color 0.2s; }
+    .read-btn:hover { background: rgba(167,139,250,0.1); border-color: var(--accent3); }
+
+    /* ARTICLE OVERLAY */
+    #article-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+      overflow-y: auto;
+    }
+    #article-overlay.active { display: block; }
+    .article-wrap { max-width: 760px; margin: 3rem auto; padding: 0 1.5rem 5rem; }
+    .article-back { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.85rem; cursor: pointer; margin-bottom: 2rem; transition: color 0.2s; background: none; border: none; font-family: inherit; }
+    .article-back:hover { color: var(--text); }
+    .article-header { margin-bottom: 2.5rem; }
+    .article-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .article-thumb { width: 100%; height: 280px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 6rem; margin-bottom: 2rem; }
+    .article-header h1 { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    .article-header p.intro { font-size: 1.1rem; color: var(--muted); line-height: 1.8; }
+    .article-body { font-size: 0.97rem; line-height: 1.85; color: var(--muted); }
+    .article-body h2 { font-size: 1.35rem; font-weight: 800; color: var(--text); margin: 2.5rem 0 1rem; letter-spacing: -0.01em; }
+    .article-body h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 2rem 0 0.75rem; }
+    .article-body p { margin-bottom: 1.25rem; }
+    .article-body ul, .article-body ol { margin: 0 0 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .article-body li { line-height: 1.7; }
+    .article-body strong { color: var(--text); font-weight: 700; }
+    .article-body blockquote { border-left: 3px solid var(--accent1); padding: 1rem 1.5rem; margin: 1.5rem 0; background: rgba(99,102,241,0.06); border-radius: 0 8px 8px 0; color: var(--text); font-style: italic; }
+    .article-body .tip { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 10px; padding: 1rem 1.25rem; margin: 1.5rem 0; }
+    .article-body .tip strong { color: #22c55e; }
+    .article-divider { height: 1px; background: var(--border); margin: 3rem 0; }
+
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
+
+    @media (max-width: 768px) {
+      .blog-grid { grid-template-columns: 1fr; }
+      nav { padding: 0.75rem 1.25rem; }
+      .blog-hero { padding: 3rem 1.25rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Pixflow</a>
+  <a href="index.html" class="nav-back">← Back to Home</a>
+</nav>
+
+<div class="blog-hero">
+  <div class="label">Insights & Ideas</div>
+  <h1>The Pixflow Blog</h1>
+  <p>Design tips, coding insights, and everything you need to know about building a great online presence.</p>
+  <div class="blog-count">📝 7 articles · Updated regularly</div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterPosts('all',this)">All Posts</button>
+  <button class="filter-btn" onclick="filterPosts('Design',this)">Design</button>
+  <button class="filter-btn" onclick="filterPosts('Coding',this)">Coding</button>
+  <button class="filter-btn" onclick="filterPosts('App Building',this)">App Building</button>
+  <button class="filter-btn" onclick="filterPosts('Business',this)">Business</button>
+  <button class="filter-btn" onclick="filterPosts('Tips',this)">Tips</button>
+</div>
+
+<div class="blog-grid-section">
+  <div class="blog-grid" id="blog-grid">
+
+    <!-- POST 1 -->
+    <div class="blog-card" data-tag="Design" onclick="openArticle(0)">
+      <div class="blog-thumb bt-1">🎨</div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="blog-tag">Design</span>
+          <span class="blog-date">22 Mar 2026</span>
+          <span class="blog-read-time">5 min read</span>
+        </div>
+        <h2>Why Your Website's First Impression Decides Everything</h2>
+        <p>You have 0.05 seconds to make an impression. Here's how great design turns visitors into clients before they even read a word.</p>
+        <span class="read-btn">Read Article →</span>
+      </div>
+    </div>
+
+    <!-- POST 2 -->
+    <div class="blog-card" data-tag="Tips" onclick="openArticle(1)">
+      <div class="blog-thumb bt-2">📱</div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="blog-tag">Tips</span>
+          <span class="blog-date">21 Mar 2026</span>
+          <span class="blog-read-time">4 min read</span>
+        </div>
+        <h2>Mobile-First: Why 60% of Your Visitors Are on Their Phone</h2>
+        <p>Most websites still look broken on mobile. Here's what mobile-first actually means and why it matters for your business.</p>
+        <span class="read-btn">Read Article →</span>
+      </div>
+    </div>
+
+    <!-- POST 3 -->
+    <div class="blog-card" data-tag="Coding" onclick="openArticle(2)">
+      <div class="blog-thumb bt-3">⚡</div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="blog-tag">Coding</span>
+          <span class="blog-date">20 Mar 2026</span>
+          <span class="blog-read-time">6 min read</span>
+        </div>
+        <h2>Page Speed Is Money: How a Slow Site Kills Your Conversions</h2>
+        <p>Every second of load time costs you customers. We break down exactly what slows sites down — and how to fix it.</p>
+        <span class="read-btn">Read Article →</span>
+      </div>
+    </div>
+
+    <!-- POST 4 -->
+    <div class="blog-card" data-tag="App Building" onclick="openArticle(3)">
+      <div class="blog-thumb bt-4">🚀</div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="blog-tag">App Building</span>
+          <span class="blog-date">19 Mar 2026</span>
+          <span class="blog-read-time">7 min read</span>
+        </div>
+        <h2>From Idea to App: How to Go From Zero to Launch in Under 2 Weeks</h2>
+        <p>Building a web app doesn't have to take months. Here's the exact process we use to ship fast without cutting corners.</p>
+        <span class="read-btn">Read Article →</span>
+      </div>
+    </div>
+
+    <!-- POST 5 -->
+    <div class="blog-card" data-tag="Design" onclick="openArticle(4)">
+      <div class="blog-thumb bt-5">🎯</div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="blog-tag">Design</span>
+          <span class="blog-date">18 Mar 2026</span>
+          <span class="blog-read-time">5 min read</span>
+        </div>
+        <h2>The 5 Design Mistakes That Are Losing You Customers Right Now</h2>
+        <p>Bad design costs you money every single day. These are the five most common mistakes we see — and exactly how to fix them.</p>
+        <span class="read-btn">Read Article →</span>
+      </div>
+    </div>
+
+    <!-- POST 6 -->
+    <div class="blog-card" data-tag="Business" onclick="openArticle(5)">
+      <div class="blog-thumb bt-6">💰</div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="blog-tag">Business</span>
+          <span class="blog-date">17 Mar 2026</span>
+          <span class="blog-read-time">4 min read</span>
+        </div>
+        <h2>Do You Actually Need a Website in 2026? (Honest Answer)</h2>
+        <p>With Instagram, TikTok, and LinkedIn everywhere — is a website still worth it? The honest answer might surprise you.</p>
+        <span class="read-btn">Read Article →</span>
+      </div>
+    </div>
+
+    <!-- POST 7 -->
+    <div class="blog-card" data-tag="Coding" onclick="openArticle(6)">
+      <div class="blog-thumb bt-7">🔧</div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="blog-tag">Coding</span>
+          <span class="blog-date">16 Mar 2026</span>
+          <span class="blog-read-time">8 min read</span>
+        </div>
+        <h2>React vs Plain HTML: Which Should You Build Your Site With?</h2>
+        <p>The age-old question for web developers. Here's when to use React, when plain HTML wins, and how to make the right call for your project.</p>
+        <span class="read-btn">Read Article →</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ARTICLE OVERLAY -->
+<div id="article-overlay">
+  <div class="article-wrap" id="article-content"></div>
+</div>
+
+<footer>© 2026 Pixflow. All rights reserved. · <a href="index.html" style="color:var(--accent3);text-decoration:none">Back to Home</a></footer>
+
+<script>
+  const articles = [
+    {
+      tag: 'Design', date: '22 Mar 2026', readTime: '5 min read', thumb: 'bt-1', emoji: '🎨',
+      title: "Why Your Website's First Impression Decides Everything",
+      intro: "You have exactly 0.05 seconds — that's 50 milliseconds — to make a first impression on a website visitor. Before they read a single word, before they scroll, their brain has already formed an opinion. Here's what that means for your business.",
+      content: `
+        <h2>The 0.05 Second Rule</h2>
+        <p>Research from Google found that users form visual impressions of a website in as little as 50 milliseconds. That's faster than a blink. In that tiny window, visitors are judging your colours, layout, imagery, and overall feel — not your content.</p>
+        <p>This means that no matter how good your product or service is, if your website looks untrustworthy or outdated, people are gone before they even know what you offer.</p>
+        <blockquote>"It takes about 50 milliseconds for users to form an opinion about your website that determines whether they'll stay or leave." — Lindgaard et al., 2006</blockquote>
+        <h2>What People Actually Judge in Those 50ms</h2>
+        <ul>
+          <li><strong>Colour palette</strong> — Does it feel professional? Energetic? Trustworthy?</li>
+          <li><strong>Visual complexity</strong> — Is it clean and easy to scan, or cluttered and overwhelming?</li>
+          <li><strong>Layout</strong> — Does it feel modern and balanced, or cramped and amateurish?</li>
+          <li><strong>Typography</strong> — Are the fonts sharp and readable, or harsh and inconsistent?</li>
+          <li><strong>Imagery</strong> — Are the visuals high quality, or do they feel like stock photo library rejects?</li>
+        </ul>
+        <h2>The Trust Factor</h2>
+        <p>75% of users admit to judging a company's credibility based on its website design. Think about that. Three quarters of your visitors are deciding whether to trust your business based purely on how it looks — not what you do.</p>
+        <p>This is especially critical if you're a small business or freelancer competing against larger brands. A polished, well-designed site is often the only thing separating you from a competitor in the eyes of a potential client.</p>
+        <div class="tip"><strong>💡 Tip:</strong> The most important part of your website is the first screen visitors see without scrolling — the "above the fold" area. Nail that and you've already won half the battle.</div>
+        <h2>What Makes a Strong First Impression?</h2>
+        <h3>1. Clear visual hierarchy</h3>
+        <p>The most important thing should look the most important. Your headline, subheading, and call-to-action button should guide the eye naturally without confusion.</p>
+        <h3>2. Consistent colour palette</h3>
+        <p>Stick to 2-3 colours max. A consistent palette signals professionalism and makes your brand instantly recognisable.</p>
+        <h3>3. Plenty of white space</h3>
+        <p>Cramming everything in feels desperate. White space gives your content room to breathe and makes everything feel more premium.</p>
+        <h3>4. High-quality visuals</h3>
+        <p>Blurry images, stretched logos, or generic stock photos immediately undermine trust. Every visual element should look intentional and sharp.</p>
+        <h2>The Bottom Line</h2>
+        <p>Your website is your digital storefront. You wouldn't let your physical shop look dirty and disorganised — don't let your website be the digital equivalent. First impressions are made in milliseconds, but the trust (or distrust) they create lasts the entire visit.</p>
+        <p>If you're not sure your site is making the right impression, it probably isn't. Reach out and let's fix that.</p>
+      `
+    },
+    {
+      tag: 'Tips', date: '21 Mar 2026', readTime: '4 min read', thumb: 'bt-2', emoji: '📱',
+      title: "Mobile-First: Why 60% of Your Visitors Are on Their Phone",
+      intro: "Open Google Analytics on almost any website and you'll find the same thing: more than half of visitors are on mobile. Yet most businesses still design for desktop first — and their mobile experience suffers for it.",
+      content: `
+        <h2>The Numbers Don't Lie</h2>
+        <p>As of 2026, over 60% of all web traffic comes from mobile devices. In some industries — retail, food, entertainment — that number is closer to 80%. If your website isn't built with mobile in mind, you're actively turning away the majority of your audience.</p>
+        <h2>What "Mobile-First" Actually Means</h2>
+        <p>Mobile-first isn't just about making your website "responsive" (a word that's been abused for years). True mobile-first design means you start the design process with the smallest screen and work your way up — not the other way around.</p>
+        <p>This matters because a site designed on desktop and then "shrunk down" for mobile will always feel like a compromise. A site designed for mobile from the start feels natural and intentional on every screen.</p>
+        <div class="tip"><strong>💡 Tip:</strong> Test your website on a real phone, not just your browser's mobile simulator. Real devices reveal problems that simulators miss — slow load times, tiny tap targets, and layout breaks.</div>
+        <h2>The Most Common Mobile Mistakes</h2>
+        <ul>
+          <li><strong>Text too small to read</strong> — If someone has to pinch and zoom to read your content, they're already gone</li>
+          <li><strong>Buttons too small to tap</strong> — Tap targets should be at least 44x44px. A tiny "Submit" button is a conversion killer</li>
+          <li><strong>Horizontal scrolling</strong> — Content should never overflow the screen width on mobile</li>
+          <li><strong>Slow load times</strong> — Mobile connections are slower. A 5MB image that looks great on desktop will take 10 seconds to load on 4G</li>
+          <li><strong>Pop-ups covering the whole screen</strong> — Google penalises sites that do this on mobile, and users hate it</li>
+        </ul>
+        <h2>How Google Feels About Mobile</h2>
+        <p>Since 2019, Google has used "mobile-first indexing" — meaning it crawls and indexes the mobile version of your site to determine search rankings. If your mobile experience is poor, your SEO suffers regardless of how good your desktop site is.</p>
+        <h2>What Good Mobile Design Looks Like</h2>
+        <p>A properly mobile-first website feels effortless on a phone. Navigation is a single tap, text is comfortably readable without zooming, images load fast, and the most important information is visible without scrolling. Everything just works.</p>
+        <p>Every site we build at Pixflow is fully tested on real devices before delivery. Mobile isn't an afterthought — it's where the work starts.</p>
+      `
+    },
+    {
+      tag: 'Coding', date: '20 Mar 2026', readTime: '6 min read', thumb: 'bt-3', emoji: '⚡',
+      title: "Page Speed Is Money: How a Slow Site Kills Your Conversions",
+      intro: "Amazon calculated that every 100 milliseconds of extra load time cost them 1% in sales. That's not a typo. Page speed isn't a technical nice-to-have — it's directly tied to revenue.",
+      content: `
+        <h2>The Data Is Clear</h2>
+        <p>Google's research shows that as page load time goes from 1 second to 3 seconds, the probability of a bounce increases by 32%. From 1 second to 5 seconds, it jumps to 90%. By 10 seconds, you've lost 123% more visitors — many who will never come back.</p>
+        <blockquote>"A 2-second delay in load time during a transaction results in abandonment rates of up to 87%." — Akamai Research</blockquote>
+        <h2>What Makes a Website Slow?</h2>
+        <h3>1. Unoptimised images</h3>
+        <p>This is the number one culprit. A DSLR photo can be 8MB raw. That same image, properly optimised and converted to WebP format, can be 150KB — that's 50x smaller with no visible difference in quality. Most websites have dozens of these unoptimised images.</p>
+        <h3>2. Too many plugins and scripts</h3>
+        <p>Every third-party script — chat widgets, analytics tools, ad trackers, social buttons — adds HTTP requests and execution time. A WordPress site with 30 plugins can easily load 40+ scripts before your content even appears.</p>
+        <h3>3. No caching</h3>
+        <p>Without proper caching, every visitor triggers a fresh load of every file. With caching, returning visitors load near-instantly from their local browser storage.</p>
+        <h3>4. Unminified code</h3>
+        <p>Development code has spaces, comments, and formatting for readability. Production code should have all of that stripped out — reducing file sizes by 20-40% with zero impact on how the site works.</p>
+        <h3>5. Bad hosting</h3>
+        <p>Cheap shared hosting puts your site on a server with thousands of others. When they're busy, your site slows down. Good hosting (like Vercel, which we use at Pixflow) serves content from servers close to your users worldwide.</p>
+        <div class="tip"><strong>💡 Tip:</strong> Test your site speed at pagespeed.web.dev — it's free, made by Google, and gives you a score plus specific things to fix. Aim for 90+ on mobile.</div>
+        <h2>How We Build Fast Sites</h2>
+        <p>At Pixflow, every project is built with performance in mind from the start. Images are optimised, code is minified, and we deploy on Vercel's global CDN so your site loads fast for users anywhere in the world.</p>
+        <p>Speed isn't an extra feature — it's baked into how we work. Because fast sites convert better, rank higher, and keep visitors longer. It's that simple.</p>
+      `
+    },
+    {
+      tag: 'App Building', date: '19 Mar 2026', readTime: '7 min read', thumb: 'bt-4', emoji: '🚀',
+      title: "From Idea to App: How to Go From Zero to Launch in Under 2 Weeks",
+      intro: "Most people think building a web app takes months. The truth is, with the right approach and modern tools, you can go from idea to live product in under two weeks. Here's exactly how we do it.",
+      content: `
+        <h2>The Old Way vs The New Way</h2>
+        <p>Traditional software development involved months of planning, wireframing, design handoffs, development, testing, and deployment — each step its own separate phase with its own team. A 12-week project was considered fast.</p>
+        <p>Modern web development has completely changed this. With the right tools, frameworks, and a clear process, a single skilled developer can move from concept to production in days, not months.</p>
+        <h2>The 2-Week Launch Blueprint</h2>
+        <h3>Days 1-2: Define and Plan</h3>
+        <p>Before writing a single line of code, we nail down exactly what the app needs to do. Not what it could do — what it <em>needs</em> to do for v1. This means listing the core features, the user flow, and the data model. Everything else goes on a "future" list.</p>
+        <p>The biggest killer of fast launches is scope creep — adding features before the core is even built. Ruthless prioritisation is the secret weapon.</p>
+        <h3>Days 3-5: Build the Core</h3>
+        <p>With a clear plan, development moves fast. We use React for the frontend and Node.js for the backend — both are fast to build with and highly flexible. The database is set up, the core features are built, and the basic UI is in place.</p>
+        <div class="tip"><strong>💡 Tip:</strong> Don't build what you can borrow. Auth, payments, email — there are great tools for all of these (Clerk, Stripe, Resend). Use them. Don't reinvent wheels.</div>
+        <h3>Days 6-8: Design and Polish</h3>
+        <p>Once the core works, we make it look great. This is where the UI gets polished — consistent colours, smooth animations, responsive layouts, and all the little details that make a product feel professional.</p>
+        <h3>Days 9-10: Testing</h3>
+        <p>We test everything on real devices and real connections. Edge cases, broken flows, slow networks — all of it gets checked. Any bugs get squashed here before real users ever see them.</p>
+        <h3>Days 11-12: Deploy and Launch</h3>
+        <p>Deployment on Vercel takes minutes. Custom domain, SSL certificate, global CDN — it's all handled automatically. The app goes live and it's ready to share with the world.</p>
+        <h2>What This Means for You</h2>
+        <p>You don't need to wait 3 months for your idea to become real. With Pixflow's Pro package, we can take your concept and ship a fully working web app — with user accounts, a database, and custom features — in under two weeks. That's not a promise we take lightly.</p>
+      `
+    },
+    {
+      tag: 'Design', date: '18 Mar 2026', readTime: '5 min read', thumb: 'bt-5', emoji: '🎯',
+      title: "The 5 Design Mistakes That Are Losing You Customers Right Now",
+      intro: "Bad design is expensive. Not in the cost to build it — in the customers it silently turns away every day. Here are the five most common design mistakes we see, and exactly how to fix them.",
+      content: `
+        <h2>Mistake 1: Too Much Going On</h2>
+        <p>The number one design mistake is trying to say everything at once. Three hero images rotating, five different font sizes, eight different colours, a chatbot, a newsletter popup, and a video all fighting for attention on the same page.</p>
+        <p>The fix: pick one thing you want visitors to do on each page. One call to action. One message. Everything else supports it — or it gets cut.</p>
+        <h2>Mistake 2: Ignoring White Space</h2>
+        <p>White space (also called negative space) isn't wasted space — it's one of the most powerful tools in design. It gives content room to breathe, draws attention to what matters, and makes the overall experience feel premium rather than cheap.</p>
+        <p>If your website feels cramped or cluttered, the fix is usually removing things, not adding them.</p>
+        <div class="tip"><strong>💡 Tip:</strong> Apple has built one of the world's most valuable brands on the principle of doing less, better. Their website is famously sparse. The white space isn't emptiness — it's confidence.</div>
+        <h2>Mistake 3: Walls of Text</h2>
+        <p>Nobody reads walls of text on a website. They scan. If your content is long paragraphs with no breaks, no headers, no bullet points — visitors will skip straight past it.</p>
+        <p>Break everything into scannable chunks. Use headers to signal what each section is about. Use bullet points for lists. Keep paragraphs short — 3-4 sentences max.</p>
+        <h2>Mistake 4: Weak or Missing Call to Action</h2>
+        <p>A call to action (CTA) tells visitors what to do next. "Get in Touch," "Start Your Project," "Book a Call" — clear, specific, and impossible to miss.</p>
+        <p>We see websites all the time where the CTA is buried at the bottom, tiny, and written as "Click here." That's not a call to action — it's a whisper. Your CTA should be visible, prominent, and compelling.</p>
+        <h2>Mistake 5: Using Every Colour in the Rainbow</h2>
+        <p>A professional colour palette has 2-3 colours: a primary (your main brand colour), an accent (for highlights and CTAs), and a neutral (for backgrounds and text). That's it.</p>
+        <p>When we see websites with 8 different colours used seemingly at random, it signals one thing to visitors: this wasn't built by a professional. Restraint in colour is a sign of confidence.</p>
+        <h2>The Bottom Line</h2>
+        <p>Great design isn't about making things look "nice" — it's about removing obstacles between your visitor and the action you want them to take. Fix these five mistakes and you'll see the difference immediately.</p>
+      `
+    },
+    {
+      tag: 'Business', date: '17 Mar 2026', readTime: '4 min read', thumb: 'bt-6', emoji: '💰',
+      title: "Do You Actually Need a Website in 2026? (Honest Answer)",
+      intro: "With Instagram, TikTok, LinkedIn, and WhatsApp Business everywhere — you might be wondering if a website is still worth it. Here's the honest answer: yes. But the reason why might surprise you.",
+      content: `
+        <h2>The Social Media Trap</h2>
+        <p>Social media platforms are powerful. They have your audience, they're free to use, and they make it easy to post content. It's tempting to think that's enough. Many small businesses do.</p>
+        <p>But here's the problem: you don't own your presence on Instagram. Meta does. Tomorrow they could change the algorithm, restrict your reach, delete your account, or shut down entirely — and you'd lose everything you built there overnight. It's happened before.</p>
+        <blockquote>"Social media is rented land. Your website is the land you own." — Every digital marketer ever</blockquote>
+        <h2>What a Website Gives You That Social Can't</h2>
+        <ul>
+          <li><strong>Full ownership and control</strong> — Nobody can take it away, restrict it, or change how it works without your permission</li>
+          <li><strong>Google search visibility</strong> — Social media profiles don't rank for commercial searches. "Best web designer in Dubai" won't show someone's Instagram</li>
+          <li><strong>Credibility</strong> — Having a professional website immediately signals that you're serious. No website often means no sale for B2B clients</li>
+          <li><strong>Your own data</strong> — Analytics, email lists, customer data — all yours, not locked inside a platform</li>
+          <li><strong>Custom experience</strong> — You control every pixel. Social platforms control what people see on their platform, not you</li>
+        </ul>
+        <h2>The SEO Argument</h2>
+        <p>Google processes over 8 billion searches per day. Many of those are people actively looking to buy something — "web designer near me," "custom logo design," "buy running shoes online." These are people with their wallet out, looking for someone exactly like you.</p>
+        <p>Without a website, you're invisible to all of them. Social media cannot replace this.</p>
+        <h2>When Social Media Alone Might Be Enough</h2>
+        <p>To be honest: if you're a very small, local business that gets all its work through referrals and word of mouth, and you have no ambitions to grow — you might be okay without a website. For now.</p>
+        <p>But if you want to grow, attract clients you don't already know, and build a lasting brand — the answer is clear. You need a website.</p>
+        <h2>The Good News</h2>
+        <p>You don't need a massive, expensive website to start. A well-designed 3-4 page site can do more for your business than a half-hearted 20-page one. Start lean, start professional, and grow from there. That's exactly what our Starter package is for.</p>
+      `
+    },
+    {
+      tag: 'Coding', date: '16 Mar 2026', readTime: '8 min read', thumb: 'bt-7', emoji: '🔧',
+      title: "React vs Plain HTML: Which Should You Build Your Site With?",
+      intro: "If you've asked this question, you're not alone. React is everywhere, but plain HTML still powers millions of websites. Here's an honest breakdown of when to use each — and how we decide at Pixflow.",
+      content: `
+        <h2>First: What's the Actual Difference?</h2>
+        <p>Plain HTML (with CSS and JavaScript) is the foundation of the web. Every browser can read it natively. It's fast, simple, and has been the standard for 30+ years.</p>
+        <p>React is a JavaScript library that lets you build user interfaces as "components" — reusable pieces of UI that can manage their own state and update dynamically without refreshing the page. It was built by Facebook and is now used by thousands of major companies.</p>
+        <h2>When Plain HTML Wins</h2>
+        <h3>Simple, content-focused websites</h3>
+        <p>If your website is primarily about displaying information — a portfolio, a landing page, a restaurant menu, a band website — plain HTML is almost always the better choice. It's simpler to build, faster to load, easier to maintain, and doesn't require any build tools or Node.js setup.</p>
+        <h3>SEO-critical sites</h3>
+        <p>Plain HTML is natively indexable by search engines. React apps can be SEO-optimised (especially with Next.js), but it requires extra work. For a simple site, HTML is the path of least resistance for good SEO.</p>
+        <h3>Speed matters above all</h3>
+        <p>A plain HTML page with optimised CSS loads in under 1 second almost universally. A React app always has a JavaScript bundle to download and execute first. For simple sites, this overhead is unnecessary.</p>
+        <div class="tip"><strong>💡 Tip:</strong> At Pixflow, our Starter and Standard packages are built with plain HTML/CSS/JS. They load blazing fast and rank well on Google. There's no reason to over-engineer a simple site.</div>
+        <h2>When React Wins</h2>
+        <h3>Interactive web applications</h3>
+        <p>If your site has complex interactivity — user dashboards, real-time data, drag-and-drop interfaces, forms that update dynamically — React's component model makes managing all of this dramatically easier. The IB Grade Tracker we built is a perfect example: it has state that changes constantly as users add and edit grades, and React handles all of that elegantly.</p>
+        <h3>User accounts and authentication</h3>
+        <p>Apps with login systems, personalised content, and user-specific data are much easier to build in React. Managing "who is logged in" and showing them the right content is exactly what React excels at.</p>
+        <h3>Large-scale applications</h3>
+        <p>When a project grows to hundreds of pages and features, React's component-based architecture keeps the codebase organised and maintainable. Plain HTML at that scale becomes a tangled mess.</p>
+        <h2>What About Next.js?</h2>
+        <p>Next.js is a framework built on top of React that solves many of React's weaknesses — it adds server-side rendering (great for SEO), file-based routing (no extra setup), and automatic optimisation. At Pixflow, when we use React, we almost always use Next.js with it.</p>
+        <h2>The Pixflow Decision Framework</h2>
+        <ul>
+          <li><strong>Landing page / portfolio / business site</strong> → Plain HTML</li>
+          <li><strong>Multi-page website with forms and animations</strong> → Plain HTML + enhanced JS</li>
+          <li><strong>Web app with user accounts</strong> → React / Next.js</li>
+          <li><strong>Real-time data, complex state</strong> → React / Next.js</li>
+          <li><strong>E-commerce</strong> → Depends on scale, but often Next.js</li>
+        </ul>
+        <h2>The Bottom Line</h2>
+        <p>React is a powerful tool, but it's not always the right tool. Using React for a 4-page portfolio site is like using a chainsaw to cut a slice of bread — technically works, but wildly overkill. Use the right tool for the job. That's what separates good developers from great ones.</p>
+      `
+    }
+  ];
+
+  function openArticle(idx) {
+    const a = articles[idx];
+    const overlay = document.getElementById('article-overlay');
+    document.getElementById('article-content').innerHTML = `
+      <button class="article-back" onclick="closeArticle()">← Back to Blog</button>
+      <div class="article-wrap-inner">
+        <div class="article-thumb ${a.thumb}">${a.emoji}</div>
+        <div class="article-header">
+          <div class="article-meta">
+            <span class="blog-tag">${a.tag}</span>
+            <span class="blog-date">${a.date}</span>
+            <span class="blog-read-time">${a.readTime}</span>
+          </div>
+          <h1>${a.title}</h1>
+          <p class="intro">${a.intro}</p>
+        </div>
+        <div class="article-divider"></div>
+        <div class="article-body">${a.content}</div>
+      </div>
+    `;
+    overlay.classList.add('active');
+    overlay.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeArticle() {
+    document.getElementById('article-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeArticle(); });
+
+  function filterPosts(tag, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.blog-card').forEach(card => {
+      if (tag === 'all' || card.dataset.tag === tag) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>
