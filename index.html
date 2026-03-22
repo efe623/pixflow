@@ -125,64 +125,45 @@
     .guarantee-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
 
     /* ── S-SHAPE STEPS ── */
-    .s-steps { max-width: 900px; margin: 2rem auto 0; position: relative; }
-    .s-step {
+    .s-steps { max-width: 860px; margin: 2rem auto 0; position: relative; }
+
+    /* Each row: 3 cards side by side */
+    .s-row {
       display: grid;
-      grid-template-columns: 1fr 60px 1fr;
-      align-items: center;
-      margin-bottom: 0;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.25rem;
       position: relative;
     }
-    .s-step.s-left .s-content { grid-column: 1; text-align: right; padding-right: 2rem; }
-    .s-step.s-left .s-dot    { grid-column: 2; }
-    .s-step.s-left .s-connector { grid-column: 3; }
-    .s-step.s-right .s-connector { grid-column: 1; }
-    .s-step.s-right .s-dot     { grid-column: 2; }
-    .s-step.s-right .s-content  { grid-column: 3; text-align: left; padding-left: 2rem; }
 
-    .s-dot {
-      width: 56px; height: 56px; border-radius: 50%;
+    .s-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .s-card:hover { border-color: var(--accent1); transform: translateY(-3px); }
+    .s-num {
+      width: 44px; height: 44px; border-radius: 12px;
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; justify-self: center;
-      box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px rgba(99,102,241,0.4);
-      z-index: 1; position: relative;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.4);
     }
-    .s-content { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-    .s-content h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.4rem; }
-    .s-content p { color: var(--muted); font-size: 0.85rem; line-height: 1.65; margin-bottom: 0.5rem; }
+    .s-card h3 { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .s-card p { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.5rem; }
+    .s-card .tl-time { font-size: 0.7rem; }
+    .s-step-num { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent1); margin-bottom: 0.3rem; }
 
-    /* curved connectors between steps */
-    .s-connector {
-      height: 80px;
-      position: relative;
-    }
-    .s-right-conn::after {
-      content: '';
-      position: absolute;
-      right: 0; top: 50%;
-      width: 100%; height: 3px;
-      background: linear-gradient(90deg, transparent, var(--accent1));
-      border-radius: 99px;
-      transform: translateY(-50%);
-    }
-    .s-left-conn::after {
-      content: '';
-      position: absolute;
-      left: 0; top: 50%;
-      width: 100%; height: 3px;
-      background: linear-gradient(90deg, var(--accent1), transparent);
-      border-radius: 99px;
-      transform: translateY(-50%);
-    }
+    /* Curved SVG connectors */
+    .s-curve-wrap { height: 60px; position: relative; overflow: visible; margin: 0; }
+    .s-curve-wrap svg { position: absolute; width: 100%; height: 100%; overflow: visible; }
 
     @media (max-width: 768px) {
-      .s-step { grid-template-columns: 50px 1fr; }
-      .s-step.s-left .s-content,
-      .s-step.s-right .s-content { grid-column: 2; text-align: left; padding-left: 1.25rem; padding-right: 0; }
-      .s-step.s-left .s-dot,
-      .s-step.s-right .s-dot { grid-column: 1; }
-      .s-connector { display: none; }
+      .s-row { grid-template-columns: 1fr; }
+      .s-curve-wrap { display: none; }
     }
 
     /* ── TIMELINE ── */
@@ -1470,54 +1451,63 @@
     <h2 class="section-title fade-up">How It Works</h2>
     <p class="section-sub fade-up">A transparent look at exactly what happens after you reach out.</p>
     <div class="s-steps">
-      <div class="s-step s-left fade-up">
-        <div class="s-connector s-right-conn"></div>
-        <div class="s-dot">💬</div>
-        <div class="s-content">
-          <div class="tl-step">Step 01</div>
+      <!-- Row 1: left → right (steps 1, 2, 3) -->
+      <div class="s-row fade-up">
+        <div class="s-card">
+          <div class="s-step-num">Step 01</div>
+          <div class="s-num">💬</div>
           <h3>You Reach Out</h3>
-          <p>Fill out the contact form with your email, chosen package, and a description of what you want. No calls, no meetings — just a simple message.</p>
+          <p>Fill out the contact form with your email, chosen package, and a description of what you want. No calls, no meetings.</p>
           <span class="tl-time">Takes 2 minutes</span>
         </div>
-      </div>
-      <div class="s-step s-right fade-up">
-        <div class="s-connector s-left-conn"></div>
-        <div class="s-dot">📋</div>
-        <div class="s-content">
-          <div class="tl-step">Step 02</div>
+        <div class="s-card">
+          <div class="s-step-num">Step 02</div>
+          <div class="s-num">📋</div>
           <h3>We Align on the Plan</h3>
-          <p>Within 24 hours you'll get a reply confirming the project scope, timeline, and price. We iron out any details so there are zero surprises later.</p>
+          <p>Within 24 hours you'll get a reply confirming scope, timeline, and price. Zero surprises.</p>
           <span class="tl-time">Within 24 hours</span>
         </div>
-      </div>
-      <div class="s-step s-left fade-up">
-        <div class="s-connector s-right-conn"></div>
-        <div class="s-dot">🎨</div>
-        <div class="s-content">
-          <div class="tl-step">Step 03</div>
+        <div class="s-card">
+          <div class="s-step-num">Step 03</div>
+          <div class="s-num">🎨</div>
           <h3>Design & Build</h3>
-          <p>Work begins immediately. You'll get updates throughout — no radio silence. The first draft is shared for your feedback before anything is finalised.</p>
-          <span class="tl-time">2–12 days depending on plan</span>
+          <p>Work begins immediately. Updates throughout — the first draft is shared for your feedback before anything is finalised.</p>
+          <span class="tl-time">2–12 days</span>
         </div>
       </div>
-      <div class="s-step s-right fade-up">
-        <div class="s-connector s-left-conn"></div>
-        <div class="s-dot">🔄</div>
-        <div class="s-content">
-          <div class="tl-step">Step 04</div>
+
+      <!-- Curved connector: sweeps right → curves down → goes back left -->
+      <div class="s-curve-wrap">
+        <svg viewBox="0 0 860 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 820 0 C 860 0, 860 60, 820 60 L 40 60 C 0 60, 0 60, 40 60" stroke="url(#sg1)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <defs>
+            <linearGradient id="sg1" x1="860" y1="0" x2="0" y2="60" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+          <!-- Arrow at end -->
+          <polygon points="40,54 28,60 40,66" fill="#a78bfa" transform="translate(0,-3)"/>
+        </svg>
+      </div>
+
+      <!-- Row 2: right → left (steps 4, 5) -->
+      <div class="s-row fade-up" style="direction:rtl">
+        <div class="s-card" style="direction:ltr">
+          <div class="s-step-num">Step 04</div>
+          <div class="s-num">🔄</div>
           <h3>Revisions</h3>
-          <p>Your feedback is taken seriously. Changes are made fast — colours, copy, layout, anything. We go back and forth until it's exactly right.</p>
+          <p>Your feedback is taken seriously. Changes made fast — colours, copy, layout, anything — until it's exactly right.</p>
           <span class="tl-time">Usually 1–2 rounds</span>
         </div>
-      </div>
-      <div class="s-step s-left fade-up">
-        <div class="s-dot">🚀</div>
-        <div class="s-content">
-          <div class="tl-step">Step 05</div>
+        <div class="s-card" style="direction:ltr">
+          <div class="s-step-num">Step 05</div>
+          <div class="s-num">🚀</div>
           <h3>Launch Day</h3>
-          <p>Your site goes live with a real URL. Deployment is fully handled — you don't touch a single setting. Just share the link with the world.</p>
-          <span class="tl-time">Same day as final approval</span>
+          <p>Your site goes live with a real URL. Deployment fully handled — just share the link with the world.</p>
+          <span class="tl-time">Same day as approval</span>
         </div>
+        <div style="visibility:hidden" class="s-card" aria-hidden="true"></div>
       </div>
     </div>
   </div>
