@@ -32,7 +32,7 @@
     .stats + section,
     .marquee-section + section,
     section + .marquee-section {
-      border-top: 1px solid var(--border);
+      border-top: 3px solid var(--border);
     }
 
     body {
@@ -58,7 +58,7 @@
     .marquee-section {
       overflow: hidden;
       background: var(--bg2);
-      border-top: 1px solid var(--border);
+      border-top: 3px solid var(--border);
       border-bottom: 1px solid var(--border);
       padding: 1rem 0;
     }
@@ -254,9 +254,22 @@
       text-decoration: none;
       font-size: 0.9rem;
       transition: color 0.2s;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent3));
+      border-radius: 99px;
+      transition: width 0.25s ease;
     }
 
     .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
 
     .nav-cta {
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
@@ -492,7 +505,7 @@
     /* ── STATS ── */
     .stats {
       background: var(--bg2);
-      border-top: 1px solid var(--border);
+      border-top: 3px solid var(--border);
       border-bottom: 1px solid var(--border);
       padding: 2rem 2rem;
     }
@@ -1028,7 +1041,7 @@
     /* ── FOOTER ── */
     footer {
       background: var(--bg);
-      border-top: 1px solid var(--border);
+      border-top: 3px solid var(--border);
       padding: 2.5rem 2rem;
       text-align: center;
     }
